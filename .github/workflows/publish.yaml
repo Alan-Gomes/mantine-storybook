@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+      - "main"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: mantinedev/mantine
+          ref: refs/heads/master
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+      - id: build-publish
+        uses: bitovi/github-actions-storybook-to-github-pages@v1.0.3
+        with:
+          checkout: false
+          path: storybook-static
+          install_command: yarn install
+          build_command: npx ynpx storybook build
